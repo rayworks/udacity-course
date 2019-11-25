@@ -25,7 +25,7 @@ class CategoryRoute extends StatefulWidget {
 }
 
 class _CategoryState extends State<CategoryRoute> {
-  var categories = <Category>[];
+  final _categories = <Category>[];
 
   static const _categoryNames = <String>[
     'Length',
@@ -71,22 +71,25 @@ class _CategoryState extends State<CategoryRoute> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    categories.clear();
-    
+  void initState() {
+    super.initState();
+
     for (var i = 0; i < _categoryNames.length; i++) {
-      categories.add(Category(
+      _categories.add(Category(
         name: _categoryNames[i],
         color: _baseColors[i],
         iconLocation: Icons.cake,
         units: _retrieveUnitList(_categoryNames[i]),
       ));
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     final listView = Container(
       color: _backgroundColor,
       padding: EdgeInsets.symmetric(horizontal: 8.0),
-      child: _buildCategoryWidgets(categories),
+      child: _buildCategoryWidgets(_categories),
     );
 
     final appBar = AppBar(
