@@ -4,11 +4,15 @@
 
 import 'package:flutter/material.dart';
 
+import 'backdrop.dart';
+import 'backdrop.dart';
 import 'category.dart';
 import 'category_tile.dart';
+import 'category_tile.dart';
 import 'unit.dart';
+import 'unit_converter.dart';
 
-final _backgroundColor = Colors.green[100];
+var _backgroundColor = Colors.green[100];
 
 /// Category Route (screen).
 ///
@@ -22,6 +26,14 @@ class CategoryRoute extends StatefulWidget {
 
   @override
   _CategoryRouteState createState() => _CategoryRouteState();
+}
+
+class _Record {
+  double previousInput;
+  String inUnitName;
+  String outUnitName;
+
+  _Record(this.previousInput, this.inUnitName, this.outUnitName);
 }
 
 class _CategoryRouteState extends State<CategoryRoute> {
@@ -88,9 +100,56 @@ class _CategoryRouteState extends State<CategoryRoute> {
     }
   }
 
-  // TODO: Fill out this function
+  /// {"name":record}
+  var map = {};
+
   /// Function to call when a [Category] is tapped.
-  void _onCategoryTap(Category category) {}
+  void _onCategoryTap(Category category) {
+    _backgroundColor = category.color;
+
+    Navigator.of(context).push(MaterialPageRoute<Null>(
+      builder: (BuildContext context) {
+        _Record record;
+        if (map.containsKey(category.name)) {
+          record = map[category.name];
+        }
+
+        return Backdrop(
+          currentCategory: category,
+          frontPanel: UnitConverter(
+            category: category,
+            previousInput: record?.previousInput,
+            inUnitName: record?.inUnitName,
+            outUnitName: record?.outUnitName,
+            selectedCallback: (pre, inUnit, outUnit) {
+              map[category.name] = _Record(pre, inUnit, outUnit);
+            },
+          ),
+          backPanel: Container(
+            color: _backgroundColor,
+            padding: EdgeInsets.only(bottom: 48.0, left: 8.0, right: 8.0),
+            child: _buildCategoryWidgets(),
+          ),
+          frontTitle: Center(
+            child: Text(
+              'Unit Converter',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline,
+            ),
+          ),
+          backTitle: Container(
+            child: Center(
+              child: Text(
+                'Select a Category',
+                style: Theme.of(context).textTheme.headline,
+              ),
+            ),
+            color: Colors.transparent,
+          ),
+        );
+      },
+    ));
+  }
 
   /// Makes the correct number of rows for the list view.
   ///

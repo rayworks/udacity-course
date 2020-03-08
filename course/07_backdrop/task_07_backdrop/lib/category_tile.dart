@@ -33,7 +33,7 @@ class CategoryTile extends StatelessWidget {
         super(key: key);
 
   /// Navigates to the [UnitConverter].
-  void _navigateToConverter(BuildContext context) {
+  /*void _navigateToConverter(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute<Null>(
       builder: (BuildContext context) {
         return Scaffold(
@@ -53,7 +53,7 @@ class CategoryTile extends StatelessWidget {
         );
       },
     ));
-  }
+  }*/
 
   /// Builds a custom widget that shows [Category] information.
   ///
@@ -75,7 +75,7 @@ class CategoryTile extends StatelessWidget {
           // We can use either the () => function() or the () { function(); }
           // syntax.
           // TODO: This should call the onTap() passed into the constructor
-          onTap: () => _navigateToConverter(context),
+          onTap: () => onTap(category), // _navigateToConverter(context),
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: Row(
