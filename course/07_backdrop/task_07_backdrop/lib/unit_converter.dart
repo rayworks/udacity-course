@@ -9,7 +9,9 @@ import 'category.dart';
 import 'unit.dart';
 
 const _padding = EdgeInsets.all(16.0);
-typedef SelectedCallback = void Function(double preValue, String inUnit, String outUnit);
+
+typedef SelectedCallback = void Function(
+    double preValue, String inUnit, String outUnit);
 
 /// [UnitConverter] where users can input amounts to convert in one [Unit]
 /// and retrieve the conversion in another [Unit] for a specific [Category].
@@ -17,18 +19,9 @@ class UnitConverter extends StatefulWidget {
   /// The current [Category] for unit conversion.
   final Category category;
 
-  final double previousInput;
-  final String inUnitName;
-  final String outUnitName;
-  final SelectedCallback selectedCallback;
-
   /// This [UnitConverter] takes in a [Category] with [Units]. It can't be null.
   const UnitConverter({
     @required this.category,
-    this.previousInput,
-    this.inUnitName,
-    this.outUnitName,
-    this.selectedCallback,
   }) : assert(category != null);
 
   @override
@@ -52,8 +45,16 @@ class _UnitConverterState extends State<UnitConverter> {
     _setDefaults();
   }
 
-  // TODO: _createDropdownMenuItems() and _setDefaults() should also be called
-  // each time the user switches [Categories].
+  @override
+  void didUpdateWidget(UnitConverter old) {
+    super.didUpdateWidget(old);
+
+    // update our [DropdownMenuItem] units when we switch [Categories].
+    if (old.category != widget.category) {
+      _createDropdownMenuItems();
+      _setDefaults();
+    }
+  }
 
   /// Creates fresh list of [DropdownMenuItem] widgets, given a list of [Unit]s.
   void _createDropdownMenuItems() {
@@ -78,18 +79,8 @@ class _UnitConverterState extends State<UnitConverter> {
   /// updated output value if a user had previously entered an input.
   void _setDefaults() {
     setState(() {
-      _fromValue = this.widget.inUnitName != null
-          ? _getUnit(this.widget.inUnitName)
-          : widget.category.units[0];
-      _toValue = this.widget.outUnitName != null
-          ? _getUnit(this.widget.outUnitName)
-          : widget.category.units[1];
-
-      if (widget.previousInput != null) {
-        _inputValue = widget.previousInput;
-        textEditingController.text = _inputValue.toString();
-        _updateConversion();
-      }
+      _fromValue = this.widget.category.units[0];
+      _toValue = this.widget.category.units[1];
     });
   }
 
@@ -114,10 +105,6 @@ class _UnitConverterState extends State<UnitConverter> {
       _convertedValue =
           _format(_inputValue * (_toValue.conversion / _fromValue.conversion));
     });
-
-    if (widget.selectedCallback != null) {
-      widget.selectedCallback.call(_inputValue, _fromValue.name, _toValue.name);
-    }
   }
 
   void _updateInputValue(String input) {
